@@ -45,33 +45,60 @@ subMenuEl.style.top = "0";
 
 // Adding Menu Interaction
 for (let menu of menuLinks) {
-  let topMenuLinks = document.createElement('a'); 
-  topMenuLinks.setAttribute("href", menu.href);   
-  topMenuLinks.textContent = menu.text;
-  topMenuEl.appendChild(topMenuLinks);
+  let anchor = document.createElement('a'); 
+  anchor.setAttribute("href", menu.href);   
+  anchor.textContent = menu.text;
+  topMenuEl.appendChild(anchor);
 }
 
-// for (let menu of menuLinks) {
-//   let subMenuLinks = document.createElement('a'); 
-//   subMenuLinks.setAttribute("href", menu.subLinks.href);   
-//   subMenuLinks.textContent = menu.subLinks.text;
-//   subMenuEl.appendChild(subMenuLinks);
-// }
+let topMenuLinks = topMenuEl.querySelectorAll("a");
+
+function Menu(event) {
+  event.preventDefault();
+
+  // Make sure the clicked element is an <a>
+  if (event.target.tagName !== "A") return;
+
+  let link = event.target;
+
+  // Toggle the "active" class
+  if (link.classList.contains("active")) {
+    link.classList.remove("active");
+  } else {
+    //Initialisation of Top menu
+    topMenuLinks.forEach(menulk => {
+      menulk.classList.remove("active");
+    });
+
+    //Initialisation of Sub menu
+    while (subMenuEl.firstChild) {
+      subMenuEl.removeChild(subMenuEl.firstChild);
+    }
+    
+    link.classList.toggle("active");
+
+    // Adding Submenu Interaction
+    let clickedText = link.textContent;
+    let clickedObject = menuLinks.find(menu => menu.text === clickedText);
+
+    if (clickedObject.subLinks !== undefined){
+      for (let submenu of clickedObject.subLinks) {
+        let subMenuLink = document.createElement('a');
+        subMenuLink.setAttribute("href", submenu.href);
+        subMenuLink.textContent = submenu.text;
+        subMenuEl.appendChild(subMenuLink);
+      };
 
 
+      console.log(subMenuEl)
 
-
-function Menu(topMenuEl){
-  topMenuEl.preventDefault();
-  if (topMenuEl.target.tagName !== "A") return;
-  console.log("You clicked a link:", topMenuEl.target.textContent);
-
+    }
+  }
 }
 
 topMenuEl.addEventListener("click", Menu);
 
+// Adding Submenu Interaction
 
 
-
-
-
+ 
