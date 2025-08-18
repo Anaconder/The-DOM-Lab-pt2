@@ -64,6 +64,7 @@ function Menu(event) {
   // Toggle the "active" class
   if (link.classList.contains("active")) {
     link.classList.remove("active");
+    subMenuEl.style.top = "0";
   } else {
     //Initialisation of Top menu
     topMenuLinks.forEach(menulk => {
@@ -77,7 +78,7 @@ function Menu(event) {
     
     link.classList.toggle("active");
 
-    // Adding Submenu Interaction
+    // Adding Submenu 
     let clickedText = link.textContent;
     let clickedObject = menuLinks.find(menu => menu.text === clickedText);
 
@@ -88,17 +89,32 @@ function Menu(event) {
         subMenuLink.textContent = submenu.text;
         subMenuEl.appendChild(subMenuLink);
       };
-
-
-      console.log(subMenuEl)
+      subMenuEl.style.top = "100%";
 
     }
   }
 }
 
 topMenuEl.addEventListener("click", Menu);
+subMenuEl.addEventListener("click", subMenu);
 
-// Adding Submenu Interaction
+
+function subMenu(event) {
+  event.preventDefault();
+
+  // Make sure the clicked element is an <a>
+  if (event.target.tagName !== "A") return;
+  let link = event.target;
+  subMenuEl.style.top = "0";
+
+  // Toggle the "active" class
+  if (link.classList.contains("active")) {
+    link.classList.remove("active");
+  } else {
+       
+    link.classList.toggle("active");
+  }
+}
 
 
  
