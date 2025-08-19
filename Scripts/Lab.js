@@ -16,26 +16,88 @@ var menuLinks = [
     {text: 'sign out', href: '/account/signout'},
   ]},
 ];
+// FUNCTION DECLARATIONS
+// Build Submenu
+function buildSubmenu(subLinks){
+  while (subMenuEl.firstChild) {
+    subMenuEl.removeChild(subMenuEl.firstChild);
+  }
 
-// H1 styling and creation
+  if (subLinks && subLinks.length > 0) {
+    subLinks.forEach(sub => {
+      let subMenuLink = document.createElement('a');
+      subMenuLink.setAttribute('href', sub.href);
+      subMenuLink.textContent = sub.text;
+      subMenuEl.appendChild(subMenuLink);
+    });
+    subMenuEl.style.top = '100%';
+  } else {
+    subMenuEl.style.top = '0';
+  }
+}
+
+// TOP MENU EVENT FUNCTION
+function Menu(event) {
+  event.preventDefault();
+  if (event.target.tagName !== "A") return;
+
+  const link = event.target;
+
+  // Remove active from all top menu links
+  topMenuLinks.forEach(men => men.classList.remove('active'));
+
+  link.classList.add('active');
+
+  title.textContent = capitalizeWords(link.textContent);
+
+  const clickedObject = menuLinks.find(menu => menu.text === link.textContent);
+  
+  if(clickedObject.subLinks){
+    buildSubmenu(clickedObject.subLinks);
+    subMenuEl.style.top = '100%';
+  } 
+  
+  else{
+    subMenuEl.style.top = '0';
+  }
+}
+
+// Capitalize Each Word
+function capitalizeWords(text) {
+  return text.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+}
+
+// SUBMENU EVENT FUNCTION
+function subMenu(event) {
+  event.preventDefault();
+  if (event.target.tagName !== "A") return;
+
+  const link = event.target;
+
+  // Replace H1 text with capitalized words
+  title.textContent = capitalizeWords(link.textContent);
+
+
+  // Hide submenu and deactivate top menu
+  subMenuEl.style.top = '0';
+  topMenuLinks.forEach(sub => sub.classList.remove('active'));
+}
+
+
+// MAIN CODE
 let mainEl = document.querySelector("main"); 
-
 mainEl.style.backgroundColor = `var(--main-bg)`;
 
 let title = document.createElement('h1');
 title.textContent = `DOM Manipulation`;
 mainEl.appendChild(title);
-
 mainEl.classList.add("flex-ctr");
 
-// Top menu styling
 let topMenuEl = document.getElementById("top-menu"); 
 topMenuEl.style.height = `100%`;
-
 topMenuEl.style.backgroundColor = `var(--top-menu-bg)`;
 topMenuEl.classList.add("flex-around");
 
-// Creating the Submenu
 let subMenuEl = document.getElementById("sub-menu"); 
 subMenuEl.style.height = `100%`;
 subMenuEl.style.backgroundColor = `var(--sub-menu-bg)`;
@@ -43,7 +105,7 @@ subMenuEl.classList.add("flex-around");
 subMenuEl.style.position = "absolute";
 subMenuEl.style.top = "0";
 
-// Adding Menu Interaction
+// CREATE TOP MENU LINKS
 for (let menu of menuLinks) {
   let anchor = document.createElement('a'); 
   anchor.setAttribute("href", menu.href);   
@@ -53,68 +115,7 @@ for (let menu of menuLinks) {
 
 let topMenuLinks = topMenuEl.querySelectorAll("a");
 
-function Menu(event) {
-  event.preventDefault();
 
-  // Make sure the clicked element is an <a>
-  if (event.target.tagName !== "A") return;
-
-  let link = event.target;
-
-  // Toggle the "active" class
-  if (link.classList.contains("active")) {
-    link.classList.remove("active");
-    subMenuEl.style.top = "0";
-  } else {
-    //Initialisation of Top menu
-    topMenuLinks.forEach(menulk => {
-      menulk.classList.remove("active");
-    });
-
-    //Initialisation of Sub menu
-    while (subMenuEl.firstChild) {
-      subMenuEl.removeChild(subMenuEl.firstChild);
-    }
-    
-    link.classList.toggle("active");
-
-    // Adding Submenu 
-    let clickedText = link.textContent;
-    let clickedObject = menuLinks.find(menu => menu.text === clickedText);
-
-    if (clickedObject.subLinks !== undefined){
-      for (let submenu of clickedObject.subLinks) {
-        let subMenuLink = document.createElement('a');
-        subMenuLink.setAttribute("href", submenu.href);
-        subMenuLink.textContent = submenu.text;
-        subMenuEl.appendChild(subMenuLink);
-      };
-      subMenuEl.style.top = "100%";
-
-    }
-  }
-}
-
+// EVENT LISTENERS
 topMenuEl.addEventListener("click", Menu);
 subMenuEl.addEventListener("click", subMenu);
-
-
-function subMenu(event) {
-  event.preventDefault();
-
-  // Make sure the clicked element is an <a>
-  if (event.target.tagName !== "A") return;
-  let link = event.target;
-  subMenuEl.style.top = "0";
-
-  // Toggle the "active" class
-  if (link.classList.contains("active")) {
-    link.classList.remove("active");
-  } else {
-       
-    link.classList.toggle("active");
-  }
-}
-
-
- 
